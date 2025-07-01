@@ -53,7 +53,75 @@ export const createUser = async (
       },
     });
     return handleResponse(res, 201, "User created successfully", newUser);
-  } catch(error) {
+  } catch (error) {
     next(error);
   }
+};
+
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = Number(req.params.id);
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (!user) {
+    return handleResponse(res, 400, "User you are looking for is not found");
+  }
+  return handleResponse(res, 201, "User fetched successfully", user);
+};
+
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = Number(req.params.id);
+  const { name, email, password } = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (!user) {
+    return handleResponse(res, 400, "User you are looking for is not found");
+  }
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      name,
+      email,
+      password,
+    },
+  });
+  return handleResponse(res, 201, "User updated successfully", updatedUser);
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = Number(req.params.id);
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (!user) {
+    return handleResponse(res, 400, "User you are looking for is not found");
+  }
+  const deletedUser = await prisma.user.delete({
+    where: {
+      id: userId,
+    },
+  });
+  return handleResponse(res, 201, "User deleted successfully", deletedUser);
 };
