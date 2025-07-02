@@ -32,7 +32,7 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, age, isMarried, nationality } = req.body;
     const findUser = await prisma.user.findUnique({
       where: {
         email: email,
@@ -47,9 +47,12 @@ export const createUser = async (
     }
     const newUser = await prisma.user.create({
       data: {
-        name: name,
-        email: email,
-        password: password,
+        name,
+        email,
+        password,
+        age,
+        isMarried,
+        nationality,
       },
     });
     return handleResponse(res, 201, "User created successfully", newUser);
@@ -81,7 +84,7 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   const userId = Number(req.params.id);
-  const { name, email, password } = req.body;
+  const { name, email, password, age, isMarried, nationality } = req.body;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -99,6 +102,9 @@ export const updateUser = async (
       name,
       email,
       password,
+      age,
+      isMarried,
+      nationality,
     },
   });
   return handleResponse(res, 201, "User updated successfully", updatedUser);
